@@ -6,7 +6,21 @@ from read_data import load_data
 data = load_data()
 def main():
     data = load_data()
-    id_to_region(data,1385,1985)
+    finalList = []
+    seasonResults = data["RegularSeasonCompactResults"]
+    print(seasonResults[:1])
+    print(get_seed_list(seasonResults[:1],data))
+
+
+#Returns list [WinningteamSeedNum, LosingteamSeedNum]
+def get_seed_list(seasonResultsRow, data):
+    list = []
+    winner = seasonResultsRow["WTeamID"].values[0]
+    loser = seasonResultsRow["LTeamID"].values[0]
+    year = seasonResultsRow['Season'].values[0]
+    list.append(id_to_region(data,winner,year))
+    list.append(id_to_region(data,loser,year))
+    return list
 
 def id_to_region(data, id, year):
     x = ["W","X","Y","Z"]
