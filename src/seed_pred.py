@@ -1,11 +1,15 @@
 import numpy as np
-import read_data
+import pandas as pd
+import matplotlib.pyplot as plt
+from read_data import load_data
 
 
 def main():
     print("hello world")
-    data = read_data.load_data()
-    print(data["Seasons"])
+    data = load_data()
+    print(data["Seasons"].plot())
+    plt.show()
+    print(data["Seasons"]["RegionZ"])
 
 
 if __name__=="__main__":
