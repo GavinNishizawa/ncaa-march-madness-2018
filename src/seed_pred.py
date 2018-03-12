@@ -8,8 +8,10 @@ def main():
     data = load_data()
     finalList = []
     seasonResults = data["RegularSeasonCompactResults"]
-    print(seasonResults[:1])
-    print(get_seed_list(seasonResults[:1],data))
+    #print(seasonResults[:1])
+    df = pd.DataFrame([get_seed_list(seasonResults[:1],data)])
+    df.columns = ["w_team","l_team"]
+    print( df["w_team"] )
 
 
 #Returns list [WinningteamSeedNum, LosingteamSeedNum]
