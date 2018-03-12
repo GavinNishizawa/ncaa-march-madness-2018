@@ -51,7 +51,6 @@ def test_load_csv():
 
 
 def main():
-    print("Test loading data")
     data = load_data()
     print("Available DataSet Keys: ")
     for key in data.keys():
