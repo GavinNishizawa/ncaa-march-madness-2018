@@ -14,14 +14,16 @@ def main():
     id_to_region(data,1385,1985)
 
 def id_to_region(data, id, year):
-    seedData = data["NCAATourneySeeds"]
-    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] ==id)][:1]
-    print(currRow)
     x = ["W","X","Y","Z"]
-    #currSeed = currRow['Seed'][0]
-    #print(currSeed)
-    #first_letter,seednumber = currSeed[:1], int(currSeed[1:3])
-    #print(x.index(first_letter)*16 + seednumber)
+    seedData = data["NCAATourneySeeds"]
+
+    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] ==id)][:1]
+    currSeed = currRow['Seed'].values[0]
+
+    first_letter = currSeed[:1]
+    seednumber = int(currSeed[1:3])
+
+    return x.index(first_letter)*16 + seednumber
 
 if __name__=="__main__":
     main()
