@@ -6,12 +6,13 @@ from read_data import load_data
 data = load_data()
 def main():
     data = load_data()
-    finalList = get_total_seed_list(data)
-
+    seasonResults = data["RegularSeasonCompactResults"]
+    #print(seasonResults[:1])
+    df = pd.DataFrame([get_seed_list(seasonResults[:1],data)])
+    df.columns = ["w_team","l_team"]
+    print( df["w_team"] )
 
 def get_total_seed_list(data):
-    finalList = []
-    seasonResults = data["RegularSeasonCompactResults"]
     for row in seasonResults.values:
         finalList.append(get_seed_list(row, data))
     return finalList
@@ -34,7 +35,7 @@ def id_to_region(data, id, year):
     x = ["W","X","Y","Z"]
     seedData = data["NCAATourneySeeds"]
 
-    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] == id)][:1]
+    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] ==id)][:1]
     currSeed = currRow['Seed'].values[0]
 
     first_letter = currSeed[:1]
