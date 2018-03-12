@@ -53,9 +53,9 @@ def test_load_csv():
 def main():
     print("Test loading data")
     data = load_data()
-    print(data)
-    # print(data.keys())
-    # print(data["Teams"])
+    print("Available DataSet Keys: ")
+    for key in data.keys():
+        print("\t"+key)
 
 
 if __name__ == "__main__":
