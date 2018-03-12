@@ -20,7 +20,7 @@ def get_total_seed_list(data):
 #Returns list [WinningteamSeedNum, LosingteamSeedNum]
 def get_seed_list(seasonResultsRow, data):
     list = []
-    #winner = seasonResultsRow["WTeamID"].values[0]
+    #winner = seasonResultsRow["WTeamID"].values[0] 
     #loser = seasonResultsRow["LTeamID"].values[0]
     #year = seasonResultsRow['Season'].values[0]
     winner = seasonResultsRow[2]
