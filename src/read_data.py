@@ -1,17 +1,14 @@
-'''
+"""
 Read in the data from csv files
-'''
-
+"""
 import pandas as pd
-import numpy as np
 import os
-import csv
 import glob
 import pickle
 
 
 def load_csv(filename):
-    pickle_fn = filename+".pkl"
+    pickle_fn = filename + ".pkl"
 
     # load data from pickle file if it exists
     if os.path.isfile(pickle_fn):
@@ -36,11 +33,11 @@ def load_data():
         df_dict = {}
 
         # load all csv files in data directory
-        for f in glob.glob(os.path.join("data","*.csv")):
+        for f in glob.glob(os.path.join("data", "*.csv")):
             # key based on their filename
             f_key = f.split('/')[1].split('.')[0]
 
-            print("Loading:",f_key)
+            print("Loading:", f_key)
             df_dict[f_key] = load_csv(f)
 
         pickle.dump(df_dict, open(pickle_fn, 'wb'))
@@ -54,11 +51,12 @@ def test_load_csv():
 
 
 def main():
-    print("Test loading data")
     data = load_data()
-    print(data)
+    print("Available DataSet Keys: ")
+    for key in data.keys():
+        print("\t"+key)
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
 
