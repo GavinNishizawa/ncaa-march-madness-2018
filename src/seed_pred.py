@@ -6,18 +6,26 @@ from read_data import load_data
 data = load_data()
 def main():
     data = load_data()
+    finalList = get_total_seed_list(data)
+
+
+def get_total_seed_list(data):
     finalList = []
     seasonResults = data["RegularSeasonCompactResults"]
-    print(seasonResults[:1])
-    print(get_seed_list(seasonResults[:1],data))
-
+    for row in seasonResults.values:
+        finalList.append(get_seed_list(row, data))
+    return finalList
 
 #Returns list [WinningteamSeedNum, LosingteamSeedNum]
 def get_seed_list(seasonResultsRow, data):
     list = []
-    winner = seasonResultsRow["WTeamID"].values[0]
-    loser = seasonResultsRow["LTeamID"].values[0]
-    year = seasonResultsRow['Season'].values[0]
+    #winner = seasonResultsRow["WTeamID"].values[0]
+    #loser = seasonResultsRow["LTeamID"].values[0]
+    #year = seasonResultsRow['Season'].values[0]
+    winner = seasonResultsRow[2]
+    loser = seasonResultsRow[4]
+    year = seasonResultsRow[0]
+    print(winner)
     list.append(id_to_region(data,winner,year))
     list.append(id_to_region(data,loser,year))
     return list
@@ -26,7 +34,7 @@ def id_to_region(data, id, year):
     x = ["W","X","Y","Z"]
     seedData = data["NCAATourneySeeds"]
 
-    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] ==id)][:1]
+    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] == id)][:1]
     currSeed = currRow['Seed'].values[0]
 
     first_letter = currSeed[:1]
