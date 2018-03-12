@@ -38,7 +38,7 @@ def load_data():
         # load all csv files in data directory
         for f in glob.glob(os.path.join("data","*.csv")):
             # key based on their filename
-            f_key = f.split('/')[1].split('.')[0]
+            f_key = os.path.basename(f).split('.')[0]
 
             print("Loading:",f_key)
             df_dict[f_key] = load_csv(f)
