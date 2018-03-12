@@ -9,7 +9,7 @@ def main():
     finalList = []
     seasonResults = data["RegularSeasonCompactResults"]
     print(seasonResults[:1])
-    print(get_seed_list(seasonResults[:1],data))
+    print(get_seed_list(seasonResults[:1],data)) 
 
 
 #Returns list [WinningteamSeedNum, LosingteamSeedNum]
