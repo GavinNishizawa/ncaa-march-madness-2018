@@ -7,6 +7,13 @@ import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
 import knn
 import svm
+import log_reg
+
+
+models = {
+    "knn": knn, "svm": svm,
+    "log_reg": log_reg
+}
 
 
 def plot(X, Y, c_fn):
@@ -58,8 +65,6 @@ def plot_model(train, test, model_test_output):
 
 
 def _run_model(m_name, train_data, test_data):
-    models = { "knn": knn, "svm": svm }
-
     model = models[m_name]
 
     # train model on training data
@@ -83,8 +88,8 @@ def run_model(m_name):
 
 
 def main():
-    train, test, test_predict = run_model("knn")
-    train, test, test_predict = run_model("svm")
+    for key in models.keys():
+        run_model(key)
     #plot_model(train, test, test_predict)
 
 
