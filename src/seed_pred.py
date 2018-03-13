@@ -3,46 +3,53 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from read_data import load_data
 
-data = load_data()
+
 def main():
     data = load_data()
-    seasonResults = data["RegularSeasonCompactResults"]
-    #print(seasonResults[:1])
-    df = pd.DataFrame([get_seed_list(seasonResults[:1],data)])
-    df.columns = ["w_team","l_team"]
-    print( df["w_team"] )
+    seed_data = get_seed_data(data)
+    print(seed_data)
 
-def get_total_seed_list(data):
-    for row in seasonResults.values:
-        finalList.append(get_seed_list(row, data))
-    return finalList
 
-#Returns list [WinningteamSeedNum, LosingteamSeedNum]
-def get_seed_list(seasonResultsRow, data):
-    list = []
-    #winner = seasonResultsRow["WTeamID"].values[0] 
-    #loser = seasonResultsRow["LTeamID"].values[0]
-    #year = seasonResultsRow['Season'].values[0]
-    winner = seasonResultsRow[2]
-    loser = seasonResultsRow[4]
-    year = seasonResultsRow[0]
-    print(winner)
-    list.append(id_to_region(data,winner,year))
-    list.append(id_to_region(data,loser,year))
-    return list
-
-def id_to_region(data, id, year):
-    x = ["W","X","Y","Z"]
-    seedData = data["NCAATourneySeeds"]
-
-    currRow = seedData[(seedData['Season'] == year) & (seedData['TeamID'] ==id)][:1]
-    currSeed = currRow['Seed'].values[0]
-
-    first_letter = currSeed[:1]
-    seednumber = int(currSeed[1:3])
+def seed_val(seed):
+    seed_map = ["W","X","Y","Z"]
+    first_letter = seed[:1]
+    seednumber = int(seed[1:3])
 
     # the magic formula to convert seed to a numerical value
-    return x.index(first_letter) + 1 + (seednumber-1)*4
+    return seed_map.index(first_letter) + 1 + (seednumber-1)*4
+
+
+def get_seed_data(data):
+    seedData = data["NCAATourneySeeds"]
+    seasonResults = data["RegularSeasonCompactResults"]
+
+    # join NCAATourneySeeds on RegularSeasonCompactResults where TeamID=WTeamID and Season=Season
+    r_data = seedData.merge(seasonResults, left_on=["TeamID","Season"], right_on=["WTeamID","Season"])
+
+    # join r_data on NCAATourneySeeds where LTeamID=TeamID and Season=Season
+    r_data = r_data.merge(seedData, left_on=["LTeamID","Season"], right_on=["TeamID","Season"])
+
+    # convert seeds to seed values
+    r_data["Seed_xv"] = r_data["Seed_x"].apply(seed_val)
+    r_data["Seed_yv"] = r_data["Seed_y"].apply(seed_val)
+
+    # trim to only seed values
+    r_data = r_data[["Seed_xv","Seed_yv"]]
+
+    # copy to r2 data for inverse results
+    r2_data = pd.DataFrame()
+    r2_data["Seed_xv"] = r_data["Seed_yv"]
+    r2_data["Seed_yv"] = r_data["Seed_xv"]
+
+    # append column of 0s for target
+    r2_data = r2_data.assign(results=0)
+
+    # append column of 1s for target
+    r_data = r_data.assign(results=1)
+
+    # concat win and loss data
+    return pd.concat([r_data, r2_data])
+
 
 if __name__=="__main__":
     main()
