@@ -6,6 +6,7 @@ from sklearn import metrics
 import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
 import knn
+import svm
 
 
 def plot(X, Y, c_fn):
@@ -57,7 +58,7 @@ def plot_model(train, test, model_test_output):
 
 
 def _run_model(m_name, train_data, test_data):
-    models = { "knn": knn }
+    models = { "knn": knn, "svm": svm }
 
     model = models[m_name]
 
@@ -67,7 +68,7 @@ def _run_model(m_name, train_data, test_data):
 
     # calc accuracy
     test_accuracy = metrics.accuracy_score(test_data[:,2], test_results)
-    print("Accuracy:", test_accuracy)
+    print("Accuracy for",m_name,":", test_accuracy)
 
     return train_data, test_data, test_results
 
@@ -83,7 +84,8 @@ def run_model(m_name):
 
 def main():
     train, test, test_predict = run_model("knn")
-    plot_model(train, test, test_predict)
+    train, test, test_predict = run_model("svm")
+    #plot_model(train, test, test_predict)
 
 
 if __name__ == "__main__":
