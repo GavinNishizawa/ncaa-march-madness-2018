@@ -6,18 +6,27 @@ from read_data import load_data
 data = load_data()
 def main():
     data = load_data()
-    finalList = []
     seasonResults = data["RegularSeasonCompactResults"]
-    print(seasonResults[:1])
-    print(get_seed_list(seasonResults[:1],data))
+    #print(seasonResults[:1])
+    df = pd.DataFrame([get_seed_list(seasonResults[:1],data)])
+    df.columns = ["w_team","l_team"]
+    print( df["w_team"] )
 
+def get_total_seed_list(data):
+    for row in seasonResults.values:
+        finalList.append(get_seed_list(row, data))
+    return finalList
 
 #Returns list [WinningteamSeedNum, LosingteamSeedNum]
 def get_seed_list(seasonResultsRow, data):
     list = []
-    winner = seasonResultsRow["WTeamID"].values[0]
-    loser = seasonResultsRow["LTeamID"].values[0]
-    year = seasonResultsRow['Season'].values[0]
+    #winner = seasonResultsRow["WTeamID"].values[0] 
+    #loser = seasonResultsRow["LTeamID"].values[0]
+    #year = seasonResultsRow['Season'].values[0]
+    winner = seasonResultsRow[2]
+    loser = seasonResultsRow[4]
+    year = seasonResultsRow[0]
+    print(winner)
     list.append(id_to_region(data,winner,year))
     list.append(id_to_region(data,loser,year))
     return list
