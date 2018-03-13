@@ -10,11 +10,13 @@ import svm
 import log_reg
 import perceptron
 import pass_aggr
+import huber
 
 
 models = {
     "knn": knn, "svm": svm,
     "log_reg": log_reg,
+    "huber": huber,
     "perceptron": perceptron,
     "pass_aggr": pass_aggr
 }
