@@ -5,21 +5,8 @@ from save_data import save_object, load_object
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
-import knn
-import svm
-import log_reg
-import perceptron
-import pass_aggr
-import huber
-
-
-models = {
-    "knn": knn, "svm": svm,
-    "log_reg": log_reg,
-    "huber": huber,
-    "perceptron": perceptron,
-    "pass_aggr": pass_aggr
-}
+from models import models
+import voting
 
 
 def plot(X, Y, c_fn):
@@ -71,7 +58,10 @@ def plot_model(train, test, model_test_output):
 
 
 def _run_model(m_name, train_data, test_data):
-    model = models[m_name]
+    if m_name != "voting":
+        model = models[m_name]
+    else:
+        model = voting
 
     # train model on training data
     trained_model = model.train(train_data)
@@ -97,6 +87,9 @@ def main():
     for key in models.keys():
         run_model(key)
     #plot_model(train, test, test_predict)
+
+    # TODO: fix voting prediction with huber
+    run_model("voting")
 
 
 if __name__ == "__main__":

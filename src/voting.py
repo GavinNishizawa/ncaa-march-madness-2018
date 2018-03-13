@@ -1,10 +1,15 @@
-from sklearn import linear_model
+from sklearn import ensemble
+from models import models
 
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
+    del models["huber"]
+    v_models = [(key, models[key].create_model()) for key in models.keys()]
 
+    return ensemble.VotingClassifier(
+            estimators=v_models,
+            voting="hard"
+            )
 
 def train(data):
     X = data[:, :2]

@@ -1,10 +1,14 @@
 from sklearn import linear_model
 
 
+def create_model():
+    return linear_model.LogisticRegression()
+
+
 def train(data):
     X = data[:, :2]
     Y = data[:, 2]
-    model = linear_model.LogisticRegression()
+    model = create_model()
     model.fit(X, Y)
     return model
 

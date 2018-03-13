@@ -1,10 +1,14 @@
 from sklearn import svm
 
 
+def create_model():
+    return svm.SVC()
+
+
 def train(data):
     X = data[:, :2]
     Y = data[:, 2]
-    model = svm.SVC()
+    model = create_model()
     model.fit(X, Y)
     return model
 

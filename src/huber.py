@@ -1,11 +1,13 @@
 from sklearn import linear_model
 import numpy as np
 
+def create_model():
+    return linear_model.HuberRegressor()
 
 def train(data):
     X = data[:, :2]
     Y = data[:, 2]
-    model = linear_model.HuberRegressor()
+    model = create_model()
     model.fit(X, Y)
     return model
 

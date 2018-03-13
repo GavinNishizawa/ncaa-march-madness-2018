@@ -1,10 +1,13 @@
 from sklearn import linear_model
 
 
+def create_model():
+    return linear_model.Perceptron(max_iter=1000, tol=1e-3)
+
 def train(data):
     X = data[:, :2]
     Y = data[:, 2]
-    model = linear_model.Perceptron(max_iter=1000, tol=1e-3)
+    model = create_model()
     model.fit(X, Y)
     return model
 

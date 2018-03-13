@@ -1,10 +1,14 @@
 from sklearn import neighbors
 
 
+def create_model():
+    return neighbors.KNeighborsClassifier(n_neighbors=5)
+
+
 def train(data):
     X = data[:, :2]
     Y = data[:, 2]
-    model = neighbors.KNeighborsClassifier(n_neighbors=5)
+    model = create_model()
     model.fit(X, Y)
     return model
 

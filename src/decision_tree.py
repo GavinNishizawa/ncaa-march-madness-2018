@@ -1,10 +1,8 @@
-from sklearn import linear_model
+from sklearn import tree
 
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
-
+    return tree.DecisionTreeClassifier()
 
 def train(data):
     X = data[:, :2]

@@ -1,10 +1,7 @@
-from sklearn import linear_model
-
+from sklearn import ensemble
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
-
+    return ensemble.ExtraTreesClassifier()
 
 def train(data):
     X = data[:, :2]

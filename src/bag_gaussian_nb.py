@@ -1,9 +1,11 @@
-from sklearn import linear_model
+from sklearn import ensemble, naive_bayes
 
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
+    return ensemble.BaggingClassifier(
+        naive_bayes.GaussianNB(),
+        max_samples=0.5,
+        max_features=1)
 
 
 def train(data):

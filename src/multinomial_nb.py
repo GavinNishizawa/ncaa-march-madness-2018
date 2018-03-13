@@ -1,10 +1,8 @@
-from sklearn import linear_model
+from sklearn import naive_bayes
 
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
-
+    return naive_bayes.MultinomialNB()
 
 def train(data):
     X = data[:, :2]

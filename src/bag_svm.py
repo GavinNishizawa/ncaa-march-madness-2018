@@ -1,10 +1,11 @@
-from sklearn import linear_model
+from sklearn import svm, ensemble
 
 
 def create_model():
-    return linear_model.PassiveAggressiveClassifier(
-            max_iter=1000, tol=1e-3)
-
+    return ensemble.BaggingClassifier(
+        svm.SVC(),
+        max_samples=0.5,
+        max_features=1)
 
 def train(data):
     X = data[:, :2]
