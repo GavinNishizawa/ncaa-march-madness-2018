@@ -8,11 +8,13 @@ from seed_pred import get_seed_data
 import knn
 import svm
 import log_reg
+import perceptron
 
 
 models = {
     "knn": knn, "svm": svm,
-    "log_reg": log_reg
+    "log_reg": log_reg,
+    "perceptron": perceptron
 }
 
 
@@ -32,7 +34,7 @@ def split_data(data, ratio):
     losses = data[ld:]
 
     # shuffle data
-    r.seed(9001)
+    #r.seed(9001)
     for i in range(r.randint(3,10)):
         r.shuffle(wins)
         r.shuffle(losses)
