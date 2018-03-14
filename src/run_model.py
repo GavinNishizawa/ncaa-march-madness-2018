@@ -83,19 +83,15 @@ def run_model(m_name, train_data, test_data):
 
     # calc accuracy
     test_accuracy = metrics.accuracy_score(test_data[:,2], test_results)
-    print("Accuracy for",m_name,":", test_accuracy)
-
-    # calc precision
     test_precision = metrics.precision_score(test_data[:,2], test_results)
-    print("Precision for",m_name,":", test_precision)
-
-    # calc recall
     test_recall = metrics.recall_score(test_data[:,2], test_results)
-    print("Recall for",m_name,":", test_recall)
-
-    # calc f1
     test_f1 = metrics.f1_score(test_data[:,2], test_results)
-    print("F1 score for",m_name,":", test_f1)
+
+    print("\nResults for",m_name,":")
+    print("\tAccuracy : %0.5f" % test_accuracy)
+    print("\tRecall   : %0.5f" % test_recall)
+    print("\tPrecision: %0.5f" % test_precision)
+    print("\tF1 score : %0.5f" % test_f1)
 
     return train_data, test_data, test_results
 
