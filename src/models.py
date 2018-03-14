@@ -34,5 +34,5 @@ models = {
 
 
 def get_models():
-    return models
+    return models.copy()
 

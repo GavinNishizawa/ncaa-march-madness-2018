@@ -1,8 +1,9 @@
 from sklearn import ensemble
-from models import models
+from models import get_models
 
 
 def create_model():
+    models = get_models()
     del models["huber"]
     v_models = [(key, models[key].create_model()) for key in models.keys()]
 

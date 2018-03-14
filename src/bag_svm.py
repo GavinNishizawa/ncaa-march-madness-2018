@@ -3,7 +3,7 @@ from sklearn import svm, ensemble
 
 def create_model():
     return ensemble.BaggingClassifier(
-        svm.SVC(),
+        svm.SVC(probability=True),
         max_samples=0.5,
         max_features=1)
 

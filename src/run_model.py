@@ -5,8 +5,10 @@ from save_data import save_object, load_object
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
-from models import models
-import voting
+from models import get_models
+models = get_models()
+import voting_hard
+import voting_soft
 
 
 def plot(X, Y, c_fn):
@@ -68,10 +70,12 @@ def plot_model(train, test, model_test_output):
 
 
 def run_model(m_name, train_data, test_data):
-    if m_name != "voting":
-        model = models[m_name]
+    if m_name == "voting_hard":
+        model = voting_hard
+    elif m_name == "voting_soft":
+        model = voting_soft
     else:
-        model = voting
+        model = models[m_name]
 
     # train model on training data
     trained_model = model.train(train_data)
@@ -80,6 +84,18 @@ def run_model(m_name, train_data, test_data):
     # calc accuracy
     test_accuracy = metrics.accuracy_score(test_data[:,2], test_results)
     print("Accuracy for",m_name,":", test_accuracy)
+
+    # calc precision
+    test_precision = metrics.precision_score(test_data[:,2], test_results)
+    print("Precision for",m_name,":", test_precision)
+
+    # calc recall
+    test_recall = metrics.recall_score(test_data[:,2], test_results)
+    print("Recall for",m_name,":", test_recall)
+
+    # calc f1
+    test_f1 = metrics.f1_score(test_data[:,2], test_results)
+    print("F1 score for",m_name,":", test_f1)
 
     return train_data, test_data, test_results
 
@@ -96,8 +112,8 @@ def main():
         run_model(key, train_data, test_data)
     #plot_model(train, test, test_predict)
 
-    # TODO: fix voting prediction with huber
-    run_model("voting", train_data, test_data)
+    run_model("voting_hard", train_data, test_data)
+    run_model("voting_soft", train_data, test_data)
 
 
 if __name__ == "__main__":

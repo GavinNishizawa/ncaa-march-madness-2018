@@ -2,7 +2,7 @@ from sklearn import svm
 
 
 def create_model():
-    return svm.SVC()
+    return svm.SVC(probability=True)
 
 
 def train(data):
