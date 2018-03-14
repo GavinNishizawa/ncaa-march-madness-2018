@@ -18,25 +18,35 @@ def plot(X, Y, c_fn):
 
 
 def split_data(data, ratio):
+    '''
+    Note: each win data point must be in the same training/testing set as the corresponding loss data point, otherwise the testing and training sets have shared data.
+    '''
 
     # split data into wins and losses assume wins then losses
     ld = int(len(data)/2)
     wins = data[:ld]
     losses = data[ld:]
 
-    # shuffle data
+    # create a list of indicies
+    inds = list(range(ld))
+
+    # shuffle inds
     #r.seed(9001)
     for i in range(r.randint(3,10)):
-        r.shuffle(wins)
-        r.shuffle(losses)
+        r.shuffle(inds)
+
+    # map the wins and losses to the shuffled locations
+    # this should maintain the index between w and l points
+    shf_wins = [wins[inds.index(i)] for i in range(ld)]
+    shf_losses = [losses[inds.index(i)] for i in range(ld)]
 
     # split each set into sections according to ratio
-    s_ind_w = int(len(wins)*ratio)
-    s_ind_l = int(len(losses)*ratio)
+    s_ind_w = int(len(shf_wins)*ratio)
+    s_ind_l = int(len(shf_losses)*ratio)
 
     # create a training and testing set with wins and losses
-    train = np.vstack((wins[:s_ind_w], losses[:s_ind_l]))
-    test = np.vstack((wins[s_ind_w:], losses[s_ind_l:]))
+    train = np.vstack((shf_wins[:s_ind_w], shf_losses[:s_ind_l]))
+    test = np.vstack((shf_wins[s_ind_w:], shf_losses[s_ind_l:]))
 
     # shuffle the wins and losses in each set
     r.shuffle(train)
@@ -57,7 +67,7 @@ def plot_model(train, test, model_test_output):
     plt.show()
 
 
-def _run_model(m_name, train_data, test_data):
+def run_model(m_name, train_data, test_data):
     if m_name != "voting":
         model = models[m_name]
     else:
@@ -74,22 +84,20 @@ def _run_model(m_name, train_data, test_data):
     return train_data, test_data, test_results
 
 
-def run_model(m_name):
+def main():
+    # create training/testing dataset
     data = load_data()
     seed_data = get_seed_data(data)
     # split data into training 70% and testing 30%
     train_data, test_data = split_data(seed_data.values, 0.7)
 
-    return _run_model(m_name, train_data, test_data)
-
-
-def main():
+    # run training and testing of each of the models on the dataset
     for key in models.keys():
-        run_model(key)
+        run_model(key, train_data, test_data)
     #plot_model(train, test, test_predict)
 
     # TODO: fix voting prediction with huber
-    run_model("voting")
+    run_model("voting", train_data, test_data)
 
 
 if __name__ == "__main__":
