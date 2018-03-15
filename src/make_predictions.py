@@ -18,6 +18,9 @@ def seed_val(seed):
     return seed_map.index(first_letter) + 1 + (seednumber-1)*4
 
 
+'''
+TODO: fix bugs and clean up
+'''
 def get_test_data(data):
     seedData = data["NCAATourneySeeds"]
     seedData2018 = seedData[seedData["Season"] == 2018]
@@ -44,17 +47,10 @@ def get_test_data(data):
     # convert seeds to seed values
     sD2018["Seed_xv"] = sD2018["Seed_x"].apply(seed_val)
     sD2018["Seed_yv"] = sD2018["Seed_y"].apply(seed_val)
+    print("sD2018 shape:",sD2018.shape)
 
 
     seasonResults = data["AllCompactResults"]
-
-    '''
-    # join NCAATourneySeeds on CompactResults where TeamID=WTeamID and Season=Season
-    r_data = seedData.merge(seasonResults, left_on=["TeamID","Season"], right_on=["WTeamID","Season"])
-
-    # join r_data on NCAATourneySeeds where LTeamID=TeamID and Season=Season
-    r_data = r_data.merge(seedData, left_on=["LTeamID","Season"], right_on=["TeamID","Season"])
-    '''
 
     r_data = seasonResults
     r_data["WLoc"] = r_data["WLoc"].apply(
@@ -71,13 +67,13 @@ def get_test_data(data):
     r_data["Avg_score_y"] = r_data["LTeamID"].apply(
             lambda x:
             r_data[r_data["WTeamID"] == x]["WScore"].mean())
-    print(r_data)
+    print("r_data:",r_data)
 
 
-    sD2018 = sD2018.merge(r_data, left_on=["TeamID_x","TeamID_y"], right_on=["WTeamID","LTeamID"])
+    sD2018 = sD2018.merge(r_data, left_on=["TeamID_x"], right_on=["WTeamID"])
     print(sD2018)
 
-    # trim to wanted values
+    # trim columns
     fr_data = sD2018[[
         #"Season",
         #"DayNum",
@@ -96,6 +92,9 @@ def get_test_data(data):
     return fr_data
 
 
+'''
+TODO: fix bugs and clean up
+'''
 def main():
     data = load_data()
     seed_data = get_seed_data(data)
@@ -105,9 +104,11 @@ def main():
     # load test_data if it exists
     test_data = load_object(td_fn)
 
-    if test_data == None:
+    if type(test_data) == type(None):
         test_data = get_test_data(data)
         save_object(td_fn, test_data)
+
+    print("tdata test:",test_data.shape)
 
     t_data = {
         "train_target": train_data[:, -1],
@@ -117,18 +118,23 @@ def main():
 
     t_data = apply_pca(t_data)
     ps = run_prediction("knn", t_data)
+    print("ps",ps.shape)
     ps = np.array(ps)
-    print(ps.shape)
-    data_2018["prediction"] = pd.DataFrame(ps[:,0])
+    ps_df = pd.DataFrame(ps[:,0])
+
+    data_2018 = test_data
+    data_2018["prediction"] = ps_df[0]
     data_2018["id"] = data_2018.apply(
             lambda r: "2018_"+
                 str(int(r["TeamID_x"]))+"_"+
                 str(int(r["TeamID_y"])), axis=1)
 
     data_2018 = data_2018[["id","prediction"]]
-
+    data_2018 = data_2018.drop_duplicates()
     print(data_2018)
+
     data_2018.to_csv("predictions_2018.csv", index=False)
+    print(data_2018)
 
 
 if __name__=="__main__":
