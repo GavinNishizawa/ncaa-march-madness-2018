@@ -15,9 +15,9 @@ def seed_val(seed):
 
 def get_seed_data(data):
     seedData = data["NCAATourneySeeds"]
-    seasonResults = data["AllCompactResults"]
+    seasonResults = data["RegularSeasonCompactResults"]
 
-    # join NCAATourneySeeds on AllCompactResults where TeamID=WTeamID and Season=Season
+    # join NCAATourneySeeds on CompactResults where TeamID=WTeamID and Season=Season
     r_data = seedData.merge(seasonResults, left_on=["TeamID","Season"], right_on=["WTeamID","Season"])
 
     # join r_data on NCAATourneySeeds where LTeamID=TeamID and Season=Season
@@ -36,7 +36,11 @@ def get_seed_data(data):
             r_data[r_data["TeamID_y"] == x]["LScore"].mean())
 
     # trim to wanted values
-    r_data = r_data[["Seed_xv",
+    r_data = r_data[[
+        "Season",
+        "DayNum",
+        "NumOT",
+        "Seed_xv",
         "Seed_yv",
         "WLoc",
         "TeamID_x",
@@ -47,6 +51,9 @@ def get_seed_data(data):
 
     # copy to r2 data for inverse results
     r2_data = pd.DataFrame()
+    r2_data["Season"] = r_data["Season"]
+    r2_data["DayNum"] = r_data["DayNum"]
+    r2_data["NumOT"] = r_data["NumOT"]
     r2_data["Seed_xv"] = r_data["Seed_yv"]
     r2_data["Seed_yv"] = r_data["Seed_xv"]
     r2_data["TeamID_x"] = r_data["TeamID_y"]
