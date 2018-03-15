@@ -35,3 +35,7 @@ def train(model, train_data, train_target):
 def test(model, test_data):
     return model.predict(test_data)
 
+
+def predict(model, test_data):
+    return model.predict_proba(test_data)
+

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
 from split_data import split_data
 from save_data import save_object, load_object
-from model_man import get_models, train, test
+from model_man import get_models, train, test, predict
 models = get_models()
 from models import voting_hard, voting_soft, voting_weighted
 
@@ -34,6 +34,27 @@ def plot_model(train, test, model_test_output):
 
     plt.show()
     plt.close()
+
+
+def run_prediction(m_name, data):
+    train_data = data["train_data"]
+    train_target = data["train_target"]
+    test_data = data["test_data"]
+
+    if m_name == "voting_hard":
+        model = voting_hard
+    elif m_name == "voting_soft":
+        model = voting_soft
+    elif m_name == "voting_weighted":
+        model = voting_weighted
+    else:
+        model = models[m_name]
+
+
+    trained_model = train(model.create(), train_data, train_target)
+
+    ps = predict(trained_model, test_data)
+    return ps
 
 
 def run_model(m_name, data, retrain=False, verbose=False):
@@ -93,6 +114,15 @@ def run_model(m_name, data, retrain=False, verbose=False):
     return train_data, test_data, test_results
 
 
+def apply_pca(t_data):
+    # apply PCA and whiten
+    pca = PCA(whiten=True)
+    t_data["train_data"] = pca.fit_transform(t_data["train_data"])
+    t_data["test_data"] = pca.transform(t_data["test_data"])
+
+    return t_data
+
+
 def main(retrain=False, verbose=False):
 
     # t_data filename
@@ -121,10 +151,7 @@ def main(retrain=False, verbose=False):
 
         retrain=True
 
-    # apply PCA and whiten
-    pca = PCA(whiten=True)
-    t_data["train_data"] = pca.fit_transform(t_data["train_data"])
-    t_data["test_data"] = pca.transform(t_data["test_data"])
+    t_data = apply_pca(t_data)
 
     # run training and testing of each of the models on the dataset
     for key in models.keys():

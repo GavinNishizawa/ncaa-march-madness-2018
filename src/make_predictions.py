@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from read_data import load_data
+from run_model import apply_pca, run_prediction
+from seed_pred import get_seed_data
 
 
 def seed_val(seed):
@@ -13,8 +15,9 @@ def seed_val(seed):
     return seed_map.index(first_letter) + 1 + (seednumber-1)*4
 
 
-def get_seed_data(data):
+def get_test_data(data):
     seedData = data["NCAATourneySeeds"]
+    seedData2018 = seedData[seedData["Season"] == 2018]
     seasonResults = data["AllCompactResults"]
 
     # join NCAATourneySeeds on CompactResults where TeamID=WTeamID and Season=Season
@@ -41,6 +44,10 @@ def get_seed_data(data):
             lambda x:
             r_data[r_data["TeamID_y"] == x]["LScore"].mean())
 
+
+    r_data = r_data.merge(seedData2018, left_on=["Seed_x","TeamID_x"], right_on=["Seed","TeamID"])
+
+
     # trim to wanted values
     r_data = r_data[[
         #"Season",
@@ -57,36 +64,27 @@ def get_seed_data(data):
         "Avg_score_y",
         ]]
 
-    # copy to r2 data for inverse results
-    r2_data = pd.DataFrame()
-    #r2_data["Season"] = r_data["Season"]
-    #r2_data["DayNum"] = r_data["DayNum"]
-    #r2_data["NumOT"] = r_data["NumOT"]
-    r2_data["Seed_xv"] = r_data["Seed_yv"]
-    r2_data["Seed_yv"] = r_data["Seed_xv"]
-    r2_data["TeamID_x"] = r_data["TeamID_y"]
-    r2_data["TeamID_y"] = r_data["TeamID_x"]
-    r2_data["Avg_score_x"] = r_data["Avg_score_y"]
-    r2_data["Avg_score_y"] = r_data["Avg_score_x"]
-    r2_data["Avg_WLoc_x"] = r_data["Avg_WLoc_y"]
-    r2_data["Avg_WLoc_y"] = r_data["Avg_WLoc_x"]
-    #r2_data["WLoc"] = r_data["WLoc"].apply(
-    #    lambda x: 0 if x == 1 else 1)
-
-    # append column of 0s for target
-    r2_data = r2_data.assign(results=0)
-
-    # append column of 1s for target
-    r_data = r_data.assign(results=1)
-
-    # concat win and loss data
-    return pd.concat([r_data, r2_data])
+    return r_data
 
 
 def main():
     data = load_data()
     seed_data = get_seed_data(data)
-    print(seed_data)
+    train_data = seed_data.values
+    print(train_data.shape)
+
+    test_data = get_test_data(data).values
+    print(test_data.shape)
+
+    t_data = {
+        "train_target": train_data[:, -1],
+        "train_data": train_data[:, :-1],
+        "test_data": test_data
+        }
+
+    t_data = apply_pca(t_data)
+    ps = run_prediction("knn", t_data)
+    print(ps)
 
 
 if __name__=="__main__":
