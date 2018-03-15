@@ -64,12 +64,16 @@ def run_model(m_name, data, retrain=False, verbose=False):
 
     # calc accuracy
     test_accuracy = metrics.accuracy_score(test_target, test_results)
+    test_log_loss = metrics.log_loss(test_target, test_results)
+    test_f1 = metrics.f1_score(test_target, test_results)
+
+    # record accuracy
+    with open(tm_fn+"_results.txt",'a') as res_f:
+        res_f.write("\n%f,%f,%f" % (test_accuracy, test_log_loss, test_f1))
 
     if verbose:
-        test_precision = metrics.precision_score(test_target, test_results)
-        test_recall = metrics.recall_score(test_target, test_results)
-        test_f1 = metrics.f1_score(test_target, test_results)
-        test_log_loss = metrics.log_loss(test_target, test_results)
+        #test_precision = metrics.precision_score(test_target, test_results)
+        #test_recall = metrics.recall_score(test_target, test_results)
         test_report = metrics.classification_report(test_target, test_results)
 
         print("\nResults for",m_name,":")
@@ -87,14 +91,14 @@ def run_model(m_name, data, retrain=False, verbose=False):
     return train_data, test_data, test_results
 
 
-def main():
-    retrain = False
+def main(retrain=False, verbose=False):
+
     # t_data filename
     td_fn = os.path.join("data","train_test_split")
 
     t_data = load_object(td_fn)
 
-    if t_data == None:
+    if retrain or t_data == None:
         # create training/testing dataset
         data = load_data()
         seed_data = get_seed_data(data)
@@ -122,15 +126,15 @@ def main():
 
     # run training and testing of each of the models on the dataset
     for key in models.keys():
-        run_model(key, t_data, retrain)
+        run_model(key, t_data, retrain, verbose)
 
     #train, test, test_predict = run_model("knn", t_data)
     #plot_model(train, test, test_predict)
 
-    run_model("voting_hard", t_data, retrain)
-    run_model("voting_soft", t_data, retrain)
+    run_model("voting_hard", t_data, retrain, verbose)
+    run_model("voting_soft", t_data, retrain, verbose)
 
 
 if __name__ == "__main__":
-    main()
+    main(True, True)
 
