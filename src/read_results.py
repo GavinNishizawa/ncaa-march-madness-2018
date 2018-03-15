@@ -4,7 +4,7 @@ Read in the results data from csv files
 import pandas as pd
 import os
 import glob
-
+from save_data import save_object, load_object
 
 def load_csv(filename):
     # load from csv
@@ -13,15 +13,27 @@ def load_csv(filename):
 
 
 def load_data():
-    data = {}
+    pickle_fn = "data/trained_results"
 
-    # load all csv files in models directory
-    for f in glob.glob(os.path.join("src","models", \
-            "trained_*_results.csv")):
-        # key based on their filename
-        f_key = os.path.basename(f).split('.')[0]
+    data = load_object(pickle_fn)
+    # load data from pickle file if it exists
+    if data != None:
+        return data
 
-        data[f_key] = load_csv(f)
+    # otherwise load from csv
+    else:
+        data = {}
+
+        # load all csv files in models directory
+        for f in glob.glob(os.path.join("src","models", \
+                "trained_*_results.csv")):
+            # key based on their filename
+            f_key = os.path.basename(f).split('.')[0]
+
+            data[f_key] = load_csv(f)
+
+        # save it
+        save_object(pickle_fn, data)
 
     return data
 

@@ -10,7 +10,7 @@ from split_data import split_data
 from save_data import save_object, load_object
 from model_man import get_models, train, test
 models = get_models()
-from models import voting_hard, voting_soft
+from models import voting_hard, voting_soft, voting_weighted
 
 
 def plot(X, Y, c_fn):
@@ -46,6 +46,8 @@ def run_model(m_name, data, retrain=False, verbose=False):
         model = voting_hard
     elif m_name == "voting_soft":
         model = voting_soft
+    elif m_name == "voting_weighted":
+        model = voting_weighted
     else:
         model = models[m_name]
 
@@ -133,6 +135,7 @@ def main(retrain=False, verbose=False):
 
     run_model("voting_hard", t_data, retrain, verbose)
     run_model("voting_soft", t_data, retrain, verbose)
+    run_model("voting_weighted", t_data, retrain, verbose)
 
 
 if __name__ == "__main__":
