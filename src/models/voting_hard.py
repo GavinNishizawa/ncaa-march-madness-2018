@@ -1,5 +1,5 @@
 from sklearn import ensemble
-from models import get_models
+from get_models import get_models
 
 
 def create_model():

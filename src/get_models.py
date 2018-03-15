@@ -1,18 +1,7 @@
-import knn
-import svm
-import log_reg
-import perceptron
-import pass_aggr
-import huber
-import gaussian_nb
-import multinomial_nb
-import decision_tree
-import random_forest
-import extra_trees
-import bag_svm
-import bag_gaussian_nb
-import ada_boost
-import gradient_boosting
+from models import knn, svm, log_reg, perceptron, \
+pass_aggr, huber, gaussian_nb, multinomial_nb, \
+decision_tree, random_forest, extra_trees, bag_svm, \
+bag_gaussian_nb, ada_boost, gradient_boosting
 
 
 models = {

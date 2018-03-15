@@ -1,14 +1,13 @@
-import random as r
 import numpy as np
 from read_data import load_data
 from save_data import save_object, load_object
 from sklearn import metrics
 import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
-from models import get_models
+from split_data import split_data
+from get_models import get_models
 models = get_models()
-import voting_hard
-import voting_soft
+from models import voting_hard, voting_soft
 
 
 def plot(X, Y, c_fn):
@@ -19,54 +18,19 @@ def plot(X, Y, c_fn):
     plt.tight_layout()
 
 
-def split_data(data, ratio):
-    '''
-    Note: each win data point must be in the same training/testing set as the corresponding loss data point, otherwise the testing and training sets have shared data.
-    '''
-
-    # split data into wins and losses assume wins then losses
-    ld = int(len(data)/2)
-    wins = data[:ld]
-    losses = data[ld:]
-
-    # create a list of indicies
-    inds = list(range(ld))
-
-    # shuffle inds
-    #r.seed(9001)
-    for i in range(r.randint(3,10)):
-        r.shuffle(inds)
-
-    # map the wins and losses to the shuffled locations
-    # this should maintain the index between w and l points
-    shf_wins = [wins[inds.index(i)] for i in range(ld)]
-    shf_losses = [losses[inds.index(i)] for i in range(ld)]
-
-    # split each set into sections according to ratio
-    s_ind_w = int(len(shf_wins)*ratio)
-    s_ind_l = int(len(shf_losses)*ratio)
-
-    # create a training and testing set with wins and losses
-    train = np.vstack((shf_wins[:s_ind_w], shf_losses[:s_ind_l]))
-    test = np.vstack((shf_wins[s_ind_w:], shf_losses[s_ind_l:]))
-
-    # shuffle the wins and losses in each set
-    r.shuffle(train)
-    r.shuffle(test)
-
-    return train, test
-
-
 def plot_model(train, test, model_test_output):
     # plot training data in blue and orange
     c_fn = lambda v: "blue" if v == 1 else "orange"
     plot(train[:, :2], train[:, 2], c_fn)
+    plt.show()
+    plt.close()
 
     # plot test data in green and red
     c_fn = lambda v: "green" if v == 1 else "red"
     plot(test[:, :2], model_test_output, c_fn)
 
     plt.show()
+    plt.close()
 
 
 def run_model(m_name, train_data, test_data):
@@ -86,12 +50,16 @@ def run_model(m_name, train_data, test_data):
     test_precision = metrics.precision_score(test_data[:,2], test_results)
     test_recall = metrics.recall_score(test_data[:,2], test_results)
     test_f1 = metrics.f1_score(test_data[:,2], test_results)
+    test_log_loss = metrics.log_loss(test_data[:,2], test_results)
+    test_report = metrics.classification_report(test_data[:,2], test_results)
 
     print("\nResults for",m_name,":")
+    print("\tLog loss : %f" % test_log_loss)
     print("\tAccuracy : %0.5f" % test_accuracy)
-    print("\tRecall   : %0.5f" % test_recall)
-    print("\tPrecision: %0.5f" % test_precision)
+    #print("\tRecall   : %0.5f" % test_recall)
+    #print("\tPrecision: %0.5f" % test_precision)
     print("\tF1 score : %0.5f" % test_f1)
+    print("\nReport:\n", test_report,"\n")
 
     return train_data, test_data, test_results
 
@@ -100,6 +68,7 @@ def main():
     # create training/testing dataset
     data = load_data()
     seed_data = get_seed_data(data)
+
     # split data into training 70% and testing 30%
     train_data, test_data = split_data(seed_data.values, 0.7)
 
@@ -108,8 +77,10 @@ def main():
         run_model(key, train_data, test_data)
     #plot_model(train, test, test_predict)
 
-    run_model("voting_hard", train_data, test_data)
-    run_model("voting_soft", train_data, test_data)
+    #train, test, test_predict = run_model("knn", train_data, test_data)
+    #plot_model(train, test, test_predict)
+    #run_model("voting_hard", train_data, test_data)
+    #run_model("voting_soft", train_data, test_data)
 
 
 if __name__ == "__main__":
