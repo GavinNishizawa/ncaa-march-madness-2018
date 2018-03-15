@@ -68,7 +68,7 @@ def run_model(m_name, data, retrain=False, verbose=False):
     test_f1 = metrics.f1_score(test_target, test_results)
 
     # record accuracy
-    with open(tm_fn+"_results.txt",'a') as res_f:
+    with open(tm_fn+"_results.csv",'a') as res_f:
         res_f.write("\n%f,%f,%f" % (test_accuracy, test_log_loss, test_f1))
 
     if verbose:
