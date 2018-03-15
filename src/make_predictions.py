@@ -21,7 +21,6 @@ def seed_val(seed):
 def get_test_data(data):
     seedData = data["NCAATourneySeeds"]
     seedData2018 = seedData[seedData["Season"] == 2018]
-    print(seedData2018)
     sD2018 = pd.DataFrame(list(itr.combinations( seedData2018.TeamID, 2)))
     sD2018.columns = ["TeamID_l","TeamID_r"]
     sD2018["TeamID_x"] = sD2018.apply(
@@ -34,15 +33,11 @@ def get_test_data(data):
                 else int(r["TeamID_l"]), axis=1)
     sD2018 = sD2018[["TeamID_x","TeamID_y"]]
     sD2018 = sD2018.sort_values(["TeamID_x","TeamID_y"])
-    print(sD2018)
     sD2018 = sD2018.merge(seedData2018, left_on=["TeamID_x"], right_on=["TeamID"])
     sD2018 = sD2018[["TeamID_x","TeamID_y","Season","Seed"]]
-    print("sD:",sD2018)
-    print("seed:",seedData2018)
     sD2018 = sD2018.merge(seedData2018,\
             left_on=["TeamID_y","Season"],\
             right_on=["TeamID","Season"])
-    print(sD2018)
     sD2018 = sD2018[["TeamID_x","TeamID_y",
         "Season","Seed_x","Seed_y"]]
 
@@ -64,9 +59,6 @@ def get_test_data(data):
     r_data = seasonResults
     r_data["WLoc"] = r_data["WLoc"].apply(
         lambda x: 1 if x == 'H' else 0)
-    print("="*20,"r_data")
-    print("="*20,"r_data")
-    print(r_data)
     r_data["Avg_WLoc_x"] = r_data["WTeamID"].apply(
             lambda x:
             r_data[r_data["WTeamID"] == x]["WLoc"].mean())
@@ -86,7 +78,7 @@ def get_test_data(data):
     print(sD2018)
 
     # trim to wanted values
-    r_data = r_data[[
+    fr_data = sD2018[[
         #"Season",
         #"DayNum",
         #"NumOT",
@@ -98,10 +90,10 @@ def get_test_data(data):
         "TeamID_x",
         "TeamID_y",
         "Avg_score_x",
-        "Avg_score_y",
+        "Avg_score_y"
         ]]
 
-    return r_data
+    return fr_data
 
 
 def main():
