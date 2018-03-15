@@ -21,7 +21,7 @@ def seed_val(seed):
 
 def get_seed_data(data):
     seedData = data["NCAATourneySeeds"]
-    seasonResults = data["RegularSeasonCompactResults"]
+    seasonResults = data["AllCompactResults"]
 
     # join NCAATourneySeeds on RegularSeasonCompactResults where TeamID=WTeamID and Season=Season
     r_data = seedData.merge(seasonResults, left_on=["TeamID","Season"], right_on=["WTeamID","Season"])
