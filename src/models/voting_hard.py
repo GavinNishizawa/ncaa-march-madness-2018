@@ -1,32 +1,13 @@
 from sklearn import ensemble
-from get_models import get_models
+from model_man import get_models
 
 
-def create_model():
+def create():
     models = get_models()
-    del models["huber"]
-    v_models = [(key, models[key].create_model()) for key in models.keys()]
+    v_models = [(key, models[key].create()) for key in models.keys()]
 
     return ensemble.VotingClassifier(
             estimators=v_models,
             voting="hard"
             )
 
-def train(data):
-    X = data[:, :2]
-    Y = data[:, 2]
-    model = create_model()
-    model.fit(X, Y)
-    return model
-
-
-def test(test_data, model):
-    return model.predict(test_data)
-
-
-def main():
-    print("Use src/run_model.py to run.")
-
-
-if __name__ == "__main__":
-    main()

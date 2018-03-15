@@ -4,12 +4,6 @@ import matplotlib.pyplot as plt
 from read_data import load_data
 
 
-def main():
-    data = load_data()
-    seed_data = get_seed_data(data)
-    print(seed_data)
-
-
 def seed_val(seed):
     seed_map = ["W","X","Y","Z"]
     first_letter = seed[:1]
@@ -32,14 +26,18 @@ def get_seed_data(data):
     # convert seeds to seed values
     r_data["Seed_xv"] = r_data["Seed_x"].apply(seed_val)
     r_data["Seed_yv"] = r_data["Seed_y"].apply(seed_val)
+    r_data["WLoc"] = r_data["WLoc"].apply(
+        lambda x: 1 if x == 'H' else 0)
 
     # trim to only seed values
-    r_data = r_data[["Seed_xv","Seed_yv"]]
+    r_data = r_data[["Seed_xv","Seed_yv","WLoc"]]
 
     # copy to r2 data for inverse results
     r2_data = pd.DataFrame()
     r2_data["Seed_xv"] = r_data["Seed_yv"]
     r2_data["Seed_yv"] = r_data["Seed_xv"]
+    r2_data["WLoc"] = r_data["WLoc"].apply(
+        lambda x: 0 if x == 1 else 1)
 
     # append column of 0s for target
     r2_data = r2_data.assign(results=0)
@@ -49,6 +47,12 @@ def get_seed_data(data):
 
     # concat win and loss data
     return pd.concat([r_data, r2_data])
+
+
+def main():
+    data = load_data()
+    seed_data = get_seed_data(data)
+    print(seed_data)
 
 
 if __name__=="__main__":

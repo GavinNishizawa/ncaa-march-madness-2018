@@ -8,7 +8,7 @@ models = {
     "knn": knn, "svm": svm,
     "log_reg": log_reg,
     "bag_svm": bag_svm,
-    "huber": huber,
+    #"huber": huber,
     "gaussian_nb": gaussian_nb,
     "bag_gaussian_nb": bag_gaussian_nb,
     "multinomial_nb": multinomial_nb,
@@ -22,6 +22,16 @@ models = {
 }
 
 
+
 def get_models():
     return models.copy()
+
+
+def train(model, train_data, train_target):
+    model.fit(train_data, train_target)
+    return model
+
+
+def test(model, test_data):
+    return model.predict(test_data)
 
