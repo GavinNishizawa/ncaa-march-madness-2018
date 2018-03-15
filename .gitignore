@@ -104,4 +104,4 @@ ENV/
 .mypy_cache/
 
 # pickled files
-data/*.pkl
+**/*.pkl

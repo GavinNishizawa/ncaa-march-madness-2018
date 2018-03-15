@@ -1,7 +1,9 @@
+import os
 import numpy as np
 from read_data import load_data
 from save_data import save_object, load_object
 from sklearn import metrics
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from seed_pred import get_seed_data
 from split_data import split_data
@@ -48,7 +50,7 @@ def run_model(m_name, data, retrain=False, verbose=False):
         model = models[m_name]
 
     # trained_model filename
-    tm_fn = "trained_"+m_name+"_model"
+    tm_fn = os.path.join("src","models","trained_"+m_name+"_model")
 
     # load trained model if it exists
     trained_model = load_object(tm_fn)
@@ -56,6 +58,7 @@ def run_model(m_name, data, retrain=False, verbose=False):
     if retrain or trained_model == None:
         # train model on training data
         trained_model = train(model.create(), train_data, train_target)
+        save_object(tm_fn, trained_model)
 
     test_results = test(trained_model, test_data)
 
@@ -87,7 +90,7 @@ def run_model(m_name, data, retrain=False, verbose=False):
 def main():
     retrain = False
     # t_data filename
-    td_fn = "data/train_test_split"
+    td_fn = os.path.join("data","train_test_split")
 
     t_data = load_object(td_fn)
 
@@ -112,6 +115,10 @@ def main():
 
         retrain=True
 
+    # apply PCA and whiten
+    pca = PCA(whiten=True)
+    t_data["train_data"] = pca.fit_transform(t_data["train_data"])
+    t_data["test_data"] = pca.transform(t_data["test_data"])
 
     # run training and testing of each of the models on the dataset
     for key in models.keys():

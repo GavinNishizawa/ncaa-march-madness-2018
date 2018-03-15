@@ -11,7 +11,7 @@ models = {
     #"huber": huber,
     "gaussian_nb": gaussian_nb,
     "bag_gaussian_nb": bag_gaussian_nb,
-    "multinomial_nb": multinomial_nb,
+    #"multinomial_nb": multinomial_nb,
     "perceptron": perceptron,
     "decision_tree": decision_tree,
     "random_forest": random_forest,
