@@ -103,5 +103,8 @@ ENV/
 # mypy
 .mypy_cache/
 
+# data dir
+data/*
+
 # pickled files
 **/*.pkl
